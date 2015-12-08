@@ -44,9 +44,6 @@ def Rational_BezierSurface(Points1=np.asarray([[[0,0,0],[1,0,1],[2,0,1.5],[3,0,-
                                [1,1,1,1]
                            ]),U=r_[0:1:0.01],V=r_[0:1:0.01]):
     ans=np.zeros([U.size,V.size,3])
-
-    Bu=Rational_BezierBase(degree=weight.shape[0],weight=weight)
-    Bv=Rational_BezierBase(degree=weight.shape[1],)
     for s in range(U.size):
         u=U[s]
         for t in range(V.size):
@@ -58,47 +55,22 @@ def Rational_BezierSurface(Points1=np.asarray([[[0,0,0],[1,0,1],[2,0,1.5],[3,0,-
                     sum=sum+weight[i,j]*Bernstein(weight.shape[0],i,u)*Bernstein(weight.shape[1],j,v)
                     tmp=tmp+weight[i,j]*Points1[i,j]*Bernstein(weight.shape[0],i,u)*Bernstein(weight.shape[1],j,v)
             ans[s,t]=tmp/sum
-            # print ans[s,t]
     return ans
-
-
 
 ans=Rational_BezierSurface()
 x=ans[:,:,0]
 y=ans[:,:,1]
 z=ans[:,:,2]
-x=x.reshape(10000,1)
-y=y.reshape(10000,1)
-z=z.reshape(10000,1)
+x=x.reshape(100,100)
+y=y.reshape(100,100)
+z=z.reshape(100,100)
+
 
 
 fig = plt.figure()
-ax=fig.add_subplot(111,projection='3d')
+# ax=fig.add_subplot(111,projection='3d')
 
 ax=p3.Axes3D(fig)
-ax.plot_surface(x,y,z)
 ax.plot_surface(x, y, z, rstride=4, cstride=4, color='b')
 
 plt.show()
-# plt.plot(x,y,z)
-
-
-
-
-# R=Rational_BezierBase(degree=3,weight=np.asarray([1,1,.5,1]))
-# print R.Get(1,0.1)
-#
-# t=r_[0:1:0.001]
-# ans1=R.Get(0,t)
-# ans2=R.Get(1,t)
-# ans3=R.Get(2,t)
-# ans4=R.Get(3,t)
-#
-# fig1=plt.figure()
-# plt.plot(t,ans1,color='g')
-# plt.plot(t,ans2,color='g')
-# plt.plot(t,ans3,color='g')
-# plt.plot(t,ans4,color='g')
-# plt.show()
-#
-# R2=Rational_BezierBase(degree=3,weight=np.asarray([1,1,2,5]))
