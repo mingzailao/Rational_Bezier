@@ -68,7 +68,6 @@ z=z.reshape(100,100)
 
 
 fig = plt.figure()
-# ax=fig.add_subplot(111,projection='3d')
 
 ax=p3.Axes3D(fig)
 ax.plot_surface(x, y, z, rstride=4, cstride=4, color='b')
