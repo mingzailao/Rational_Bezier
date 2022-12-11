@@ -1,13 +1,12 @@
-
-
-from numpy import *
 import mpl_toolkits.mplot3d.axes3d as p3
 import numpy as np
 import matplotlib.pyplot as plt
 import operator
-
-
-
+from numpy import *
+from functools import reduce
+import math
+import plotly.graph_objects as go
+import matplotlib as mpl
 
 def c(n,k):
     if k!=0:
@@ -31,6 +30,7 @@ class Rational_BezierBase:
             sum=sum+self.weight[j]*Bernstein(self.degree,j,t)
         return self.weight[i]*Bernstein(self.degree,i,t)/sum
 
+    
 
 
 def Rational_BezierSurface(Points1=np.asarray([[[0,0,0],[1,0,1],[2,0,1.5],[3,0,-1]],
@@ -57,43 +57,48 @@ def Rational_BezierSurface(Points1=np.asarray([[[0,0,0],[1,0,1],[2,0,1.5],[3,0,-
             ans[s,t]=tmp/sum
     return ans
 
+def plotSurface(P,weights,style="seaborn"):
+    mpl.style.use(style)
+    ans=Rational_BezierSurface(P,weights)
+    x=ans[:,:,0]
+    y=ans[:,:,1]
+    z=ans[:,:,2]
+    x=x.reshape(10000)
+    y=y.reshape(10000)
+    z=z.reshape(10000)
 
-
-Points1=np.asarray([[[0,0,0],[1,0,1],[2,0,1.5],[3,0,-1]],
-                    [[0,1,2],[1,1,4],[2,1,2.5],[3,1,0]],
-                    [[0,2,1],[1,2,3],[2,2,2.5],[3,2,2]],
-                    [[0,3,0.5],[1,3,0],[2,3,1],[3,3,1]]])
-ans=Rational_BezierSurface()
-x=ans[:,:,0]
-y=ans[:,:,1]
-z=ans[:,:,2]
-x=x.reshape(100,100)
-y=y.reshape(100,100)
-z=z.reshape(100,100)
-
-
-
-fig = plt.figure()
-
-ax=p3.Axes3D(fig)
-ax.plot_surface(x, y, z,rstride=4,cstride=4, color='r')
-
-
-P0=Points1[:,0].transpose()
-P1=Points1[:,1].transpose()
-P2=Points1[:,2].transpose()
-P3=Points1[:,3].transpose()
-Q0=Points1[0,:].transpose()
-Q1=Points1[1,:].transpose()
-Q2=Points1[2,:].transpose()
-Q3=Points1[3,:].transpose()
-ax.plot(P0[0],P0[1],P0[2],linewidth=2,color='b')
-ax.plot(P1[0],P1[1],P1[2],linewidth=2,color='b')
-ax.plot(P2[0],P2[1],P2[2],linewidth=2,color='b')
-ax.plot(P3[0],P3[1],P3[2],linewidth=2,color='b')
-ax.plot(Q0[0],Q0[1],Q0[2],linewidth=2,color='b')
-ax.plot(Q1[0],Q1[1],Q1[2],linewidth=2,color='b')
-ax.plot(Q2[0],Q2[1],Q2[2],linewidth=2,color='b')
-ax.plot(Q3[0],Q3[1],Q3[2],linewidth=2,color='b')
-
-plt.show()
+    fig = go.Figure(data=[go.Mesh3d(x=x, y=y, z=z,color='cyan')])
+    for i in range(P.shape[0]):
+        
+        x,y,z = P[i,:].T
+    
+        fig.add_scatter3d(
+            x=x, y=y, z=z,
+            marker=dict(
+                size=4,
+                color="red",
+                colorscale='Viridis',
+            ),
+            line=dict(
+                color='darkblue',
+                width=10
+            )
+        )
+    for i in range(P.shape[1]):
+        
+        x,y,z = P[:,i].T
+    
+        fig.add_scatter3d(
+            x=x, y=y, z=z,
+            marker=dict(
+                size=4,
+                color="red",
+                colorscale='Viridis',
+            ),
+            line=dict(
+                color='darkblue',
+                width=10
+            )
+        )
+    
+    fig.show()
